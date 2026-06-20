@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
 import { useAuthStore } from '../../store/authStore';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -9,19 +8,36 @@ const Login = () => {
   const navigate = useNavigate();
   const { login, isLoading, error, clearError } = useAuthStore();
   const [loginError, setLoginError] = useState('');
-  
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    defaultValues: {
-      email: '',
-      password: '',
-    },
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
   });
+  const [formErrors, setFormErrors] = useState({});
 
-  const onSubmit = async (data) => {
+  const validate = () => {
+    const errors = {};
+    if (!formData.email) {
+      errors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = 'Invalid email address';
+    }
+    if (!formData.password) {
+      errors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      errors.password = 'Password must be at least 6 characters';
+    }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
     clearError();
     setLoginError('');
     
-    const result = await login(data.email, data.password);
+    if (!validate()) return;
+    
+    const result = await login(formData.email, formData.password);
     
     if (result.success) {
       navigate('/dashboard');
@@ -41,34 +57,28 @@ const Login = () => {
         <div className="auth-error">{error || loginError}</div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="auth-form-group">
-        <Input
-          label="Email"
-          type="email"
-          placeholder="you@example.com"
-          error={errors.email?.message}
-          {...register('email', {
-            required: 'Email is required',
-            pattern: {
-              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              message: 'Invalid email address',
-            },
-          })}
-        />
+      <form onSubmit={onSubmit} className="auth-form-group">
+        <div className="form-group">
+          <label>Email</label>
+          <Input
+            type="email"
+            value={formData.email}
+            onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+            placeholder="you@example.com"
+            error={formErrors.email}
+          />
+        </div>
 
-        <Input
-          label="Password"
-          type="password"
-          placeholder="Enter your password"
-          error={errors.password?.message}
-          {...register('password', {
-            required: 'Password is required',
-            minLength: {
-              value: 6,
-              message: 'Password must be at least 6 characters',
-            },
-          })}
-        />
+        <div className="form-group">
+          <label>Password</label>
+          <Input
+            type="password"
+            value={formData.password}
+            onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+            placeholder="Enter your password"
+            error={formErrors.password}
+          />
+        </div>
 
         <Button 
           type="submit" 

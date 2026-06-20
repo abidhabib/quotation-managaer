@@ -27,6 +27,27 @@ export const useQuotationStore = create((set, get) => ({
     set({ quotations: userQuotations });
   },
 
+  // Get quotation by ID
+  getQuotationById: (id) => {
+    return get().quotations.find(q => q.id === id);
+  },
+
+  // Update quotation status
+  updateQuotationStatus: async (id, newStatus) => {
+    return get().updateQuotation(id, { status: newStatus });
+  },
+
+  // Generate PDF (placeholder - will be implemented with pdf generation library)
+  generatePDF: async (id) => {
+    const quotation = get().getQuotationById(id);
+    if (!quotation) return { success: false, error: 'Quotation not found' };
+    
+    // In production, this would generate a real PDF
+    // For now, we'll just show a success message
+    alert(`PDF generation for ${quotation.quotationNumber} would be triggered here.`);
+    return { success: true };
+  },
+
   // Get all quotations for current user
   getQuotations: () => {
     const userId = getUserId();
