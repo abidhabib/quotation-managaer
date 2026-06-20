@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Quotation — AMHAR Premier Chauffeur Service</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  :root {
+    --ivory: #f6f1e9;
+    --cream: #fffdf8;
+    --espresso: #1a1612;
+    --charcoal: #1f1a14;
+    --gold: #b08842;
+    --gold-bright: #d4b876;
+    --gold-soft: #e8d4a8;
+    --taupe: #6b5d4f;
+    --hairline: rgba(26, 22, 18, 0.10);
+    --hairline-soft: rgba(26, 22, 18, 0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--ivory);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--espresso);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .poster {
+    width: 210mm;
+    height: 297mm;
+    background: var(--ivory);
+    padding: 14mm 18mm 12mm 18mm;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ===== Header ===== */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 6mm;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .brand {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .brand-name {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    color: var(--espresso);
+  }
+
+  .brand-tag {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .brand-sub {
+    margin-top: 6px;
+    font-size: 9.5px;
+    color: var(--taupe);
+    line-height: 1.55;
+    max-width: 240px;
+  }
+
+  .quote-meta {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .quote-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 2px;
+  }
+
+  .quote-number {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--espresso);
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .quote-dates {
+    margin-top: 5px;
+    font-size: 9.5px;
+    color: var(--taupe);
+    line-height: 1.65;
+  }
+
+  .quote-dates strong {
+    color: var(--espresso);
+    font-weight: 500;
+  }
+
+  /* ===== Parties Section ===== */
+  .parties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12mm;
+    padding: 7mm 0 6mm 0;
+  }
+
+  .party-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .party-label::before {
+    content: "";
+    width: 18px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .party-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--espresso);
+    margin-bottom: 3px;
+    letter-spacing: -0.005em;
+  }
+
+  .party-detail {
+    font-size: 10px;
+    color: var(--taupe);
+    line-height: 1.55;
+    font-weight: 400;
+  }
+
+  .party-detail strong {
+    color: var(--espresso);
+    font-weight: 500;
+  }
+
+  /* ===== Project Overview ===== */
+  .overview {
+    padding: 4.5mm 0;
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .overview-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .overview-label::before {
+    content: "";
+    width: 18px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .overview-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--espresso);
+    margin-bottom: 5px;
+    letter-spacing: -0.015em;
+  }
+
+  .overview-desc {
+    font-size: 10px;
+    color: var(--taupe);
+    line-height: 1.6;
+    max-width: 95%;
+    font-weight: 400;
+  }
+
+  /* ===== Line Items Table ===== */
+  .items {
+    padding: 4.5mm 0 3mm 0;
+  }
+
+  .items-header {
+    display: grid;
+    grid-template-columns: 32mm 1fr 18mm 30mm;
+    gap: 5mm;
+    padding: 0 0 5px 0;
+    border-bottom: 1px solid var(--espresso);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--espresso);
+  }
+
+  .items-header > div:last-child {
+    text-align: right;
+  }
+
+  .item-row {
+    display: grid;
+    grid-template-columns: 32mm 1fr 18mm 30mm;
+    gap: 5mm;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--hairline-soft);
+    align-items: start;
+  }
+
+  .item-code {
+    font-size: 9.5px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .item-desc-title {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--espresso);
+    margin-bottom: 2px;
+    letter-spacing: -0.005em;
+  }
+
+  .item-desc-sub {
+    font-size: 9px;
+    color: var(--taupe);
+    line-height: 1.45;
+    font-weight: 400;
+  }
+
+  .item-qty {
+    font-size: 10.5px;
+    color: var(--espresso);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .item-amount {
+    font-size: 10.5px;
+    color: var(--espresso);
+    font-weight: 600;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ===== Totals ===== */
+  .totals {
+    margin-top: 3mm;
+    margin-left: auto;
+    width: 72mm;
+  }
+
+  .totals-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    font-size: 10.5px;
+    color: var(--taupe);
+    border-bottom: 1px solid var(--hairline-soft);
+  }
+
+  .totals-row.grand {
+    margin-top: 5px;
+    padding: 10px 12px;
+    background: var(--espresso);
+    color: var(--ivory);
+    border: none;
+    border-radius: 2px;
+  }
+
+  .totals-row.grand .label {
+    color: var(--gold-bright);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .totals-row.grand .amount {
+    color: var(--ivory);
+    font-size: 14px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+
+  .totals-row .label {
+    font-weight: 500;
+  }
+
+  .totals-row .amount {
+    font-variant-numeric: tabular-nums;
+    color: var(--espresso);
+    font-weight: 500;
+  }
+
+  /* ===== Terms ===== */
+  .terms {
+    margin-top: 4.5mm;
+    padding-top: 4mm;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .terms-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .terms-label::before {
+    content: "";
+    width: 18px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .terms-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 4mm 8mm;
+  }
+
+  .term-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .term-key {
+    font-size: 8.5px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--taupe);
+  }
+
+  .term-val {
+    font-size: 10px;
+    color: var(--espresso);
+    line-height: 1.45;
+    font-weight: 500;
+  }
+
+  /* ===== Signature ===== */
+  .signature {
+    margin-top: auto;
+    padding-top: 4mm;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14mm;
+  }
+
+  .sig-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .sig-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--taupe);
+    margin-bottom: 14px;
+  }
+
+  .sig-line {
+    width: 56mm;
+    border-top: 1px solid var(--espresso);
+    padding-top: 5px;
+  }
+
+  .sig-name {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--espresso);
+    letter-spacing: -0.005em;
+  }
+
+  .sig-contact {
+    font-size: 9.5px;
+    color: var(--taupe);
+    font-weight: 400;
+    margin-top: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sig-role {
+    font-size: 8.5px;
+    color: var(--gold);
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  /* ===== Footer ===== */
+  .footer {
+    margin-top: 6mm;
+    padding-top: 4mm;
+    border-top: 1px solid var(--hairline);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9px;
+    color: var(--taupe);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .footer-brand {
+    color: var(--espresso);
+    font-weight: 600;
+  }
+
+  .footer-note {
+    color: var(--taupe);
+  }
+
+  /* Print screen scaling */
+  @media screen {
+    html, body { background: #e8e2d6; }
+    .poster {
+      margin: 20px auto;
+      box-shadow: 0 20px 60px -20px rgba(0,0,0,0.25);
+    }
+  }
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <!-- ===== HEADER ===== -->
+  <div class="header">
+    <div class="brand">
+      <div class="brand-name">AMHAR</div>
+      <div class="brand-tag">Premier Chauffeur Service</div>
+      <div class="brand-sub">
+        Luxury chauffeur &amp; limousine service<br>
+        Riyadh · Saudi Arabia
+      </div>
+    </div>
+    <div class="quote-meta">
+      <div class="quote-label">Quotation</div>
+      <div class="quote-number">AMH-Q-2026-001</div>
+      <div class="quote-dates">
+        <strong>Date issued:</strong> 18 June 2026<br>
+        <strong>Valid until:</strong> 18 July 2026
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PARTIES ===== -->
+  <div class="parties">
+    <div>
+      <div class="party-label">Prepared By</div>
+      <div class="party-name">Shumaila Parveen</div>
+      <div class="party-detail">
+        Freelance Web Consultant<br>
+        <strong>Contact:</strong> +92 328 6786125<br>
+        <strong>Role:</strong> Project Lead &amp; Developer
+      </div>
+    </div>
+    <div>
+      <div class="party-label">Prepared For</div>
+      <div class="party-name">Amhar KSA</div>
+      <div class="party-detail">
+        AMHAR Premier Chauffeur Service<br>
+        Riyadh, Saudi Arabia<br>
+        <strong>Project:</strong> Chauffeur Booking Platform
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PROJECT OVERVIEW ===== -->
+  <div class="overview">
+    <div class="overview-label">Project Overview</div>
+    <div class="overview-title">Luxury Chauffeur Booking &amp; Lead Management Platform</div>
+    <div class="overview-desc">
+      A premium, quote-based chauffeur booking platform with a polished luxury UI (ivory + charcoal + champagne gold), a multi-step quote-request modal, an admin operator portal for lead management, fleet CRUD, review moderation, role-based team control, and audit logging — built on Next.js with a service-layer architecture, DTO validation, and event-driven status updates.
+    </div>
+  </div>
+
+  <!-- ===== LINE ITEMS ===== -->
+  <div class="items">
+    <div class="items-header">
+      <div>Code</div>
+      <div>Description</div>
+      <div>Qty</div>
+      <div>Amount (PKR)</div>
+    </div>
+
+    <div class="item-row">
+      <div class="item-code">AMH-01</div>
+      <div>
+        <div class="item-desc-title">UI/UX Design &amp; Luxury Design System</div>
+        <div class="item-desc-sub">Mix-theme palette, Inter typography, polished micro-interactions, responsive layouts</div>
+      </div>
+      <div class="item-qty">1</div>
+      <div class="item-amount">8,000</div>
+    </div>
+
+    <div class="item-row">
+      <div class="item-code">AMH-02</div>
+      <div>
+        <div class="item-desc-title">Public Landing Page</div>
+        <div class="item-desc-sub">Cinematic hero, services grid, auto-scrolling fleet carousel, how-it-works, testimonials, footer CTA</div>
+      </div>
+      <div class="item-qty">1</div>
+      <div class="item-amount">7,000</div>
+    </div>
+
+    <div class="item-row">
+      <div class="item-code">AMH-03</div>
+      <div>
+        <div class="item-desc-title">4-Step Quote Request Modal</div>
+        <div class="item-desc-sub">Journey · Vehicle · Contact · Review — with form validation, lead reference, WhatsApp handoff</div>
+      </div>
+      <div class="item-qty">1</div>
+      <div class="item-amount">5,000</div>
+    </div>
+
+    <div class="item-row">
+      <div class="item-code">AMH-04</div>
+      <div>
+        <div class="item-desc-title">Admin Operator Portal</div>
+        <div class="item-desc-sub">Dashboard analytics, leads table with detail drawer, fleet CRUD, reviews, team roles, audit log</div>
+      </div>
+      <div class="item-qty">1</div>
+      <div class="item-amount">7,000</div>
+    </div>
+
+    <div class="item-row">
+      <div class="item-code">AMH-05</div>
+      <div>
+        <div class="item-desc-title">Backend, Database &amp; Deployment</div>
+        <div class="item-desc-sub">Prisma schema, service layer, repository pattern, event-driven lead workflow, GitHub, deploy config</div>
+      </div>
+      <div class="item-qty">1</div>
+      <div class="item-amount">3,000</div>
+    </div>
+  </div>
+
+  <!-- ===== TOTALS ===== -->
+  <div class="totals">
+    <div class="totals-row">
+      <span class="label">Subtotal</span>
+      <span class="amount">PKR 30,000</span>
+    </div>
+    <div class="totals-row">
+      <span class="label">Tax</span>
+      <span class="amount">Included</span>
+    </div>
+    <div class="totals-row grand">
+      <span class="label">Total Payable</span>
+      <span class="amount">PKR 30,000</span>
+    </div>
+  </div>
+
+  <!-- ===== TERMS ===== -->
+  <div class="terms">
+    <div class="terms-label">Terms &amp; Conditions</div>
+    <div class="terms-grid">
+      <div class="term-item">
+        <div class="term-key">Delivery</div>
+        <div class="term-val">8 – 10 working days from confirmation</div>
+      </div>
+      <div class="term-item">
+        <div class="term-key">Payment Terms</div>
+        <div class="term-val">50% advance · 50% on delivery</div>
+      </div>
+      <div class="term-item">
+        <div class="term-key">Payment Method</div>
+        <div class="term-val">Bank transfer · JazzCash · EasyPaisa</div>
+      </div>
+      <div class="term-item">
+        <div class="term-key">Revisions</div>
+        <div class="term-val">2 rounds of revisions included</div>
+      </div>
+      <div class="term-item">
+        <div class="term-key">Source Code</div>
+        <div class="term-val">Full ownership on final payment</div>
+      </div>
+      <div class="term-item">
+        <div class="term-key">Validity</div>
+        <div class="term-val">This quotation is valid for 30 days</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SIGNATURE ===== -->
+  <div class="signature">
+    <div class="sig-block">
+      <div class="sig-label">Prepared By</div>
+      <div class="sig-line">
+        <div class="sig-name">Shumaila Parveen</div>
+        <div class="sig-contact">+92 328 6786125</div>
+        <div class="sig-role">Project Consultant</div>
+      </div>
+    </div>
+    <div class="sig-block">
+      <div class="sig-label">Accepted By (Client)</div>
+      <div class="sig-line">
+        <div class="sig-name" style="color: var(--taupe); font-weight: 400;">&nbsp;</div>
+        <div class="sig-contact" style="color: var(--taupe);">Name &amp; signature</div>
+        <div class="sig-role" style="color: var(--taupe);">Amhar KSA</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <div class="footer">
+    <div class="footer-brand">AMHAR · Premier Chauffeur Service</div>
+    <div class="footer-note">Quotation AMH-Q-2026-001 · Page 1 of 1</div>
+  </div>
+
+</div>
+</body>
+</html>
