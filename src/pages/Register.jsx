@@ -1,143 +1,98 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import Button from '../components/Button';
 import Input from '../components/Input';
-import Card from '../components/Card';
+import Button from '../components/Button';
 
 export default function Register() {
+  const navigate = useNavigate();
+  const register = useAuthStore((state) => state.register);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    company: '',
     password: '',
-    confirmPassword: '',
-    company: ''
   });
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const register = useAuthStore((state) => state.register);
-  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setError('');
+    setErrors({});
 
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+    if (!formData.name) {
+      setErrors({ name: 'Name is required' });
       return;
     }
-
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
+    if (!formData.email) {
+      setErrors({ email: 'Email is required' });
+      return;
+    }
+    if (!formData.password) {
+      setErrors({ password: 'Password is required' });
       return;
     }
 
     setLoading(true);
-
-    try {
-      await register({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        company: formData.company
-      });
+    setTimeout(() => {
+      register(formData);
       navigate('/dashboard');
-    } catch (err) {
-      setError(err.message || 'Registration failed. Please try again.');
-    } finally {
       setLoading(false);
-    }
+    }, 500);
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-container">
-        <Card className="auth-card">
-          <div className="auth-header">
-            <h1>Create Account</h1>
-            <p>Start managing your quotations today</p>
-          </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-primary-600">QuoteFlow</h1>
+          <h2 className="mt-6 text-2xl font-bold text-gray-900">Create your account</h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Already have an account?{' '}
+            <Link to="/login" className="font-medium text-primary-600 hover:text-primary-500">
+              Sign in
+            </Link>
+          </p>
+        </div>
 
-          {error && (
-            <div className="error-message" role="alert">
-              {error}
-            </div>
-          )}
+        <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
+          <Input
+            label="Full name"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            error={errors.name}
+            placeholder="John Doe"
+          />
 
-          <form onSubmit={handleSubmit} className="auth-form">
-            <Input
-              type="text"
-              name="name"
-              label="Full Name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="John Doe"
-              required
-              disabled={loading}
-            />
+          <Input
+            label="Email address"
+            type="email"
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            error={errors.email}
+            placeholder="you@example.com"
+          />
 
-            <Input
-              type="email"
-              name="email"
-              label="Email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="you@company.com"
-              required
-              disabled={loading}
-            />
+          <Input
+            label="Company"
+            value={formData.company}
+            onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+            placeholder="Acme Inc"
+          />
 
-            <Input
-              type="text"
-              name="company"
-              label="Company Name"
-              value={formData.company}
-              onChange={handleChange}
-              placeholder="Acme Inc."
-              disabled={loading}
-            />
+          <Input
+            label="Password"
+            type="password"
+            value={formData.password}
+            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            error={errors.password}
+            placeholder="••••••••"
+          />
 
-            <Input
-              type="password"
-              name="password"
-              label="Password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="••••••••"
-              required
-              disabled={loading}
-            />
-
-            <Input
-              type="password"
-              name="confirmPassword"
-              label="Confirm Password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="••••••••"
-              required
-              disabled={loading}
-            />
-
-            <Button type="submit" loading={loading} fullWidth>
-              Create Account
-            </Button>
-          </form>
-
-          <div className="auth-footer">
-            <p>
-              Already have an account?{' '}
-              <Link to="/login">Sign in</Link>
-            </p>
-          </div>
-        </Card>
+          <Button type="submit" loading={loading} className="w-full">
+            Create account
+          </Button>
+        </form>
       </div>
     </div>
   );

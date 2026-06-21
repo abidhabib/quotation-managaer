@@ -1,27 +1,69 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-const useSettingsStore = create((set) => ({
-  settings: {
-    companyName: '',
-    companyLogo: null,
-    companyAddress: '',
-    companyPhone: '',
-    companyEmail: '',
-    currency: 'USD',
-    defaultValidityDays: 30,
-    defaultTaxRate: 0,
-    defaultTerms: '',
-    template: 'business'
-  },
-  
-  updateSettings: (updates) => set((state) => ({
-    settings: { ...state.settings, ...updates }
-  })),
-  
-  getSetting: (key) => {
-    const state = useSettingsStore.getState()
-    return state.settings[key]
-  }
-}))
-
-export default useSettingsStore
+export const useSettingsStore = create(
+  persist(
+    (set) => ({
+      company: {
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        country: '',
+        logo: null,
+        website: '',
+        taxId: '',
+      },
+      defaults: {
+        currency: 'USD',
+        taxRate: 0,
+        validityDays: 30,
+        terms: '',
+        notes: '',
+      },
+      
+      updateCompany: (updates) => {
+        set((state) => ({
+          company: { ...state.company, ...updates },
+        }));
+      },
+      
+      updateDefaults: (updates) => {
+        set((state) => ({
+          defaults: { ...state.defaults, ...updates },
+        }));
+      },
+      
+      resetSettings: () => {
+        set({
+          company: {
+            name: '',
+            email: '',
+            phone: '',
+            address: '',
+            city: '',
+            state: '',
+            zipCode: '',
+            country: '',
+            logo: null,
+            website: '',
+            taxId: '',
+          },
+          defaults: {
+            currency: 'USD',
+            taxRate: 0,
+            validityDays: 30,
+            terms: '',
+            notes: '',
+          },
+        });
+      },
+    }),
+    {
+      name: 'settings-storage',
+    }
+  )
+);

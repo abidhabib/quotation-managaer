@@ -1,29 +1,31 @@
-import React from 'react'
+import { cn } from '../utils/helpers';
 
-const Input = ({ 
-  label, 
-  error, 
-  className = '', 
-  id,
-  ...props 
-}) => {
-  const inputId = id || props.name
-  
+export default function Input({
+  label,
+  error,
+  className,
+  type = 'text',
+  ...props
+}) {
   return (
-    <div className={`form-group ${className}`}>
+    <div className="w-full">
       {label && (
-        <label htmlFor={inputId} className="form-label">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
           {label}
         </label>
       )}
       <input
-        id={inputId}
-        className="form-input"
+        type={type}
+        className={cn(
+          'w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200',
+          error ? 'border-red-300 focus:ring-red-500' : 'border-gray-300',
+          className
+        )}
         {...props}
       />
-      {error && <span className="form-error">{error}</span>}
+      {error && (
+        <p className="mt-1 text-sm text-red-600">{error}</p>
+      )}
     </div>
-  )
+  );
 }
-
-export default Input

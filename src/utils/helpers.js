@@ -1,86 +1,101 @@
+import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}
+
 export const formatCurrency = (amount, currency = 'USD') => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: currency
-  }).format(amount)
-}
+    currency,
+  }).format(amount);
+};
 
-export const formatDate = (dateString) => {
-  if (!dateString) return ''
-  return new Date(dateString).toLocaleDateString('en-US', {
+export const formatDate = (date) => {
+  if (!date) return '';
+  return new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
-    day: 'numeric'
-  })
-}
+    day: 'numeric',
+  });
+};
 
-export const formatDateTime = (dateString) => {
-  if (!dateString) return ''
-  return new Date(dateString).toLocaleString('en-US', {
+export const formatDateTime = (date) => {
+  if (!date) return '';
+  return new Date(date).toLocaleString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
-  })
-}
+    minute: '2-digit',
+  });
+};
 
-export const calculateQuotationTotals = (items, taxRate = 0, discountPercent = 0) => {
+export const generateId = () => {
+  return Math.random().toString(36).substring(2, 9);
+};
+
+export const generateQuoteNumber = () => {
+  const prefix = 'QT';
+  const date = new Date();
+  const year = date.getFullYear().toString().slice(-2);
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+  return `${prefix}-${year}${month}-${random}`;
+};
+
+export const calculateQuotationTotals = (items, defaultTax = 0) => {
   const subtotal = items.reduce((sum, item) => {
-    const itemTotal = (item.quantity || 0) * (item.price || 0)
-    return sum + itemTotal
-  }, 0)
-  
-  const discountAmount = subtotal * (discountPercent / 100)
-  const afterDiscount = subtotal - discountAmount
-  const taxAmount = afterDiscount * (taxRate / 100)
-  const grandTotal = afterDiscount + taxAmount
-  
-  return {
-    subtotal: Math.round(subtotal * 100) / 100,
-    discountAmount: Math.round(discountAmount * 100) / 100,
-    taxAmount: Math.round(taxAmount * 100) / 100,
-    grandTotal: Math.round(grandTotal * 100) / 100
-  }
-}
+    const itemTotal = (item.quantity || 0) * (item.price || 0);
+    const discountAmount = itemTotal * ((item.discount || 0) / 100);
+    return sum + itemTotal - discountAmount;
+  }, 0);
 
-export const generateQuotationNumber = () => {
-  const date = new Date()
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0')
-  return `QT-${year}${month}-${random}`
-}
+  const totalDiscount = items.reduce((sum, item) => {
+    const itemTotal = (item.quantity || 0) * (item.price || 0);
+    return sum + itemTotal * ((item.discount || 0) / 100);
+  }, 0);
+
+  const taxAmount = subtotal * (defaultTax / 100);
+  const grandTotal = subtotal + taxAmount;
+
+  return {
+    subtotal,
+    totalDiscount,
+    taxAmount,
+    grandTotal,
+  };
+};
+
+export const validateEmail = (email) => {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+};
+
+export const validatePhone = (phone) => {
+  const re = /^[\d\s\-\+\(\)]{10,}$/;
+  return re.test(phone);
+};
 
 export const getStatusColor = (status) => {
   const colors = {
-    draft: 'status-draft',
-    sent: 'status-sent',
-    approved: 'status-approved',
-    rejected: 'status-rejected',
-    expired: 'status-expired'
-  }
-  return colors[status] || 'status-draft'
-}
+    draft: 'badge-gray',
+    sent: 'badge-info',
+    approved: 'badge-success',
+    rejected: 'badge-danger',
+    expired: 'badge-warning',
+  };
+  return colors[status] || 'badge-gray';
+};
 
-export const validateEmail = (email) => {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return re.test(email)
-}
-
-export const validatePhone = (phone) => {
-  const re = /^[\d\s\-\+\(\)]{10,}$/
-  return re.test(phone)
-}
-
-export const debounce = (func, wait) => {
-  let timeout
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout)
-      func(...args)
-    }
-    clearTimeout(timeout)
-    timeout = setTimeout(later, wait)
-  }
-}
+export const getStatusLabel = (status) => {
+  const labels = {
+    draft: 'Draft',
+    sent: 'Sent',
+    approved: 'Approved',
+    rejected: 'Rejected',
+    expired: 'Expired',
+  };
+  return labels[status] || status;
+};

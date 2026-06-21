@@ -1,149 +1,128 @@
-import { useState, useEffect } from 'react';
-import Card from '../components/Card';
-import Badge from '../components/Badge';
+import { 
+  FileText, CheckCircle, Clock, AlertCircle, DollarSign, TrendingUp 
+} from 'lucide-react';
 import { useQuotationStore } from '../store/quotationStore';
-import { formatCurrency } from '../utils/helpers';
+import { formatCurrency, formatDate } from '../utils/helpers';
+import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
-  const { quotations, loading } = useQuotationStore();
-  const [stats, setStats] = useState({
-    total: 0,
-    totalValue: 0,
-    approved: 0,
-    pending: 0,
-    expired: 0
-  });
+  const quotations = useQuotationStore((state) => state.quotations);
 
-  useEffect(() => {
-    calculateStats();
-  }, [quotations]);
+  const stats = [
+    {
+      name: 'Total Quotations',
+      value: quotations.length,
+      icon: FileText,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-100',
+    },
+    {
+      name: 'Total Value',
+      value: formatCurrency(
+        quotations.reduce((sum, q) => sum + (q.grandTotal || 0), 0)
+      ),
+      icon: DollarSign,
+      color: 'text-green-600',
+      bgColor: 'bg-green-100',
+    },
+    {
+      name: 'Approved',
+      value: quotations.filter((q) => q.status === 'approved').length,
+      icon: CheckCircle,
+      color: 'text-green-600',
+      bgColor: 'bg-green-100',
+    },
+    {
+      name: 'Pending',
+      value: quotations.filter((q) => q.status === 'sent').length,
+      icon: Clock,
+      color: 'text-yellow-600',
+      bgColor: 'bg-yellow-100',
+    },
+  ];
 
-  const calculateStats = () => {
-    const today = new Date();
-    const statsData = quotations.reduce(
-      (acc, quote) => {
-        acc.total++;
-        acc.totalValue += quote.grandTotal || 0;
+  const recentQuotations = [...quotations]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 5);
 
-        if (quote.status === 'approved') acc.approved++;
-        if (['draft', 'sent'].includes(quote.status)) acc.pending++;
-        
-        const expiryDate = new Date(quote.expiryDate);
-        if (expiryDate < today && quote.status !== 'approved' && quote.status !== 'rejected') {
-          acc.expired++;
-        }
-
-        return acc;
-      },
-      { total: 0, totalValue: 0, approved: 0, pending: 0, expired: 0 }
-    );
-
-    setStats(statsData);
+  const statusColors = {
+    draft: 'bg-gray-100 text-gray-800',
+    sent: 'bg-blue-100 text-blue-800',
+    approved: 'bg-green-100 text-green-800',
+    rejected: 'bg-red-100 text-red-800',
+    expired: 'bg-yellow-100 text-yellow-800',
   };
-
-  const getStatusColor = (status) => {
-    const colors = {
-      draft: 'gray',
-      sent: 'blue',
-      approved: 'green',
-      rejected: 'red',
-      expired: 'orange'
-    };
-    return colors[status] || 'gray';
-  };
-
-  if (loading) {
-    return (
-      <div className="dashboard">
-        <div className="loading-state">Loading dashboard...</div>
-      </div>
-    );
-  }
 
   return (
-    <div className="dashboard">
-      <div className="dashboard-header">
-        <h1>Dashboard</h1>
-        <p className="subtitle">Overview of your quotation activity</p>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+        <Link to="/quotations/new" className="btn-primary">
+          New Quotation
+        </Link>
       </div>
 
-      <div className="stats-grid">
-        <Card className="stat-card">
-          <div className="stat-icon">📄</div>
-          <div className="stat-content">
-            <span className="stat-label">Total Quotations</span>
-            <span className="stat-value">{stats.total}</span>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((stat) => (
+          <div key={stat.name} className="card">
+            <div className="flex items-center">
+              <div className={`p-3 rounded-lg ${stat.bgColor}`}>
+                <stat.icon className={`w-6 h-6 ${stat.color}`} />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500">{stat.name}</p>
+                <p className="text-2xl font-semibold text-gray-900">{stat.value}</p>
+              </div>
+            </div>
           </div>
-        </Card>
-
-        <Card className="stat-card">
-          <div className="stat-icon">💰</div>
-          <div className="stat-content">
-            <span className="stat-label">Total Value</span>
-            <span className="stat-value">{formatCurrency(stats.totalValue)}</span>
-          </div>
-        </Card>
-
-        <Card className="stat-card">
-          <div className="stat-icon">✅</div>
-          <div className="stat-content">
-            <span className="stat-label">Approved</span>
-            <span className="stat-value">{stats.approved}</span>
-          </div>
-        </Card>
-
-        <Card className="stat-card">
-          <div className="stat-icon">⏳</div>
-          <div className="stat-content">
-            <span className="stat-label">Pending</span>
-            <span className="stat-value">{stats.pending}</span>
-          </div>
-        </Card>
-
-        <Card className="stat-card">
-          <div className="stat-icon">⚠️</div>
-          <div className="stat-content">
-            <span className="stat-label">Expired</span>
-            <span className="stat-value">{stats.expired}</span>
-          </div>
-        </Card>
+        ))}
       </div>
 
-      <div className="dashboard-section">
-        <h2>Recent Quotations</h2>
-        {quotations.length === 0 ? (
-          <Card className="empty-state">
-            <p>No quotations yet. Create your first quotation to get started.</p>
-          </Card>
+      {/* Recent Quotations */}
+      <div className="card">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Quotations</h2>
+        {recentQuotations.length === 0 ? (
+          <div className="text-center py-8">
+            <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+            <p className="text-gray-500">No quotations yet</p>
+            <Link to="/quotations/new" className="text-primary-600 hover:text-primary-700 mt-2 inline-block">
+              Create your first quotation
+            </Link>
+          </div>
         ) : (
-          <Card className="table-container">
-            <table className="data-table">
+          <div className="overflow-x-auto">
+            <table className="w-full">
               <thead>
-                <tr>
-                  <th>Quote #</th>
-                  <th>Customer</th>
-                  <th>Date</th>
-                  <th>Amount</th>
-                  <th>Status</th>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Quote #</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Customer</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Amount</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Status</th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-gray-500">Date</th>
                 </tr>
               </thead>
               <tbody>
-                {quotations.slice(0, 5).map((quote) => (
-                  <tr key={quote.id}>
-                    <td className="font-medium">{quote.quoteNumber}</td>
-                    <td>{quote.customerName}</td>
-                    <td>{new Date(quote.createdAt).toLocaleDateString()}</td>
-                    <td>{formatCurrency(quote.grandTotal)}</td>
-                    <td>
-                      <Badge color={getStatusColor(quote.status)}>
-                        {quote.status}
-                      </Badge>
+                {recentQuotations.map((quote) => (
+                  <tr key={quote.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-3 px-4 text-sm font-medium text-primary-600">
+                      <Link to={`/quotations/${quote.id}`}>{quote.quoteNumber}</Link>
                     </td>
+                    <td className="py-3 px-4 text-sm text-gray-900">{quote.customerName}</td>
+                    <td className="py-3 px-4 text-sm font-medium text-gray-900">
+                      {formatCurrency(quote.grandTotal)}
+                    </td>
+                    <td className="py-3 px-4">
+                      <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[quote.status]}`}>
+                        {quote.status}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-sm text-gray-500">{formatDate(quote.createdAt)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </Card>
+          </div>
         )}
       </div>
     </div>
