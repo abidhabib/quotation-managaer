@@ -4,20 +4,18 @@ import Layout from './layouts/Layout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
-
-// Placeholder pages - will be implemented next
-const Customers = () => <div className="card"><h1 className="text-2xl font-bold">Customers</h1><p className="mt-4 text-gray-600">Customer management coming soon...</p></div>;
-const Products = () => <div className="card"><h1 className="text-2xl font-bold">Products</h1><p className="mt-4 text-gray-600">Product management coming soon...</p></div>;
-const Quotations = () => <div className="card"><h1 className="text-2xl font-bold">Quotations</h1><p className="mt-4 text-gray-600">Quotation builder coming soon...</p></div>;
-const Settings = () => <div className="card"><h1 className="text-2xl font-bold">Settings</h1><p className="mt-4 text-gray-600">Settings page coming soon...</p></div>;
+import Customers from './pages/Customers';
+import Products from './pages/Products';
+import Quotations from './pages/Quotations';
+import Settings from './pages/Settings';
 
 function ProtectedRoute({ children }) {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { isAuthenticated } = useAuthStore();
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 }
 
 function PublicRoute({ children }) {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { isAuthenticated } = useAuthStore();
   return !isAuthenticated ? children : <Navigate to="/dashboard" replace />;
 }
 
@@ -36,8 +34,6 @@ export default function App() {
           <Route path="quotations" element={<Quotations />} />
           <Route path="settings" element={<Settings />} />
         </Route>
-        
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,78 +1,99 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import Input from '../components/Input';
 import Button from '../components/Button';
+import { validateEmail } from '../utils/helpers';
 
 export default function Login() {
   const navigate = useNavigate();
-  const login = useAuthStore((state) => state.login);
+  const { login } = useAuthStore();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors({});
-    
+    const newErrors = {};
+
     if (!formData.email) {
-      setErrors({ email: 'Email is required' });
-      return;
+      newErrors.email = 'Email is required';
+    } else if (!validateEmail(formData.email)) {
+      newErrors.email = 'Invalid email format';
     }
+
     if (!formData.password) {
-      setErrors({ password: 'Password is required' });
+      newErrors.password = 'Password is required';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
     setLoading(true);
-    setTimeout(() => {
-      login(formData.email, formData.password);
+    const result = login(formData.email, formData.password);
+    setLoading(false);
+
+    if (result.success) {
       navigate('/dashboard');
-      setLoading(false);
-    }, 500);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-primary-600">QuoteFlow</h1>
-          <h2 className="mt-6 text-2xl font-bold text-gray-900">Sign in to your account</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Or{' '}
-            <Link to="/register" className="font-medium text-primary-600 hover:text-primary-500">
-              create a new account
-            </Link>
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-ivory via-white to-gold/10 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-espresso tracking-widest mb-2">QUOTEX</h1>
+          <p className="text-sm text-gold tracking-wider">PROFESSIONAL QUOTATION MANAGEMENT</p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <Input
-            label="Email address"
-            type="email"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            error={errors.email}
-            placeholder="you@example.com"
-          />
+        {/* Card */}
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <div className="mb-6">
+            <h2 className="text-2xl font-semibold text-espresso mb-2">Welcome back</h2>
+            <p className="text-taupe">Sign in to your account to continue</p>
+          </div>
 
-          <Input
-            label="Password"
-            type="password"
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            error={errors.password}
-            placeholder="••••••••"
-          />
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <Input
+              label="Email"
+              type="email"
+              placeholder="you@company.com"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              error={errors.email}
+            />
 
-          <Button type="submit" loading={loading} className="w-full">
-            Sign in
-          </Button>
-        </form>
+            <Input
+              label="Password"
+              type="password"
+              placeholder="••••••••"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              error={errors.password}
+            />
 
-        <div className="mt-6 p-4 bg-white rounded-lg border border-gray-200">
-          <p className="text-xs text-gray-500 text-center">Demo credentials:</p>
-          <p className="text-xs text-gray-600 text-center mt-1">Any email / Any password</p>
+            <Button type="submit" loading={loading} className="w-full">
+              Sign In
+            </Button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-sm text-taupe">
+              Don't have an account?{' '}
+              <Link to="/register" className="text-gold hover:text-gold-bright font-medium">
+                Create account
+              </Link>
+            </p>
+          </div>
+        </div>
+
+        {/* Demo credentials */}
+        <div className="mt-6 p-4 bg-white/60 rounded-xl backdrop-blur-sm">
+          <p className="text-xs text-taupe text-center mb-2">Demo Credentials</p>
+          <p className="text-xs text-espresso text-center font-mono">any@email.com / anypass</p>
         </div>
       </div>
     </div>

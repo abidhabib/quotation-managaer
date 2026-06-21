@@ -5,61 +5,37 @@ export const useSettingsStore = create(
   persist(
     (set) => ({
       company: {
-        name: '',
-        email: '',
-        phone: '',
+        name: 'Your Company',
         address: '',
-        city: '',
-        state: '',
-        zipCode: '',
-        country: '',
+        phone: '',
+        email: '',
         logo: null,
-        website: '',
-        taxId: '',
+        currency: 'PKR',
       },
-      defaults: {
-        currency: 'USD',
-        taxRate: 0,
+      quotationDefaults: {
         validityDays: 30,
+        taxRate: 0,
+        discountRate: 0,
         terms: '',
         notes: '',
       },
-      
+
       updateCompany: (updates) => {
         set((state) => ({
           company: { ...state.company, ...updates },
         }));
       },
-      
+
       updateDefaults: (updates) => {
         set((state) => ({
-          defaults: { ...state.defaults, ...updates },
+          quotationDefaults: { ...state.quotationDefaults, ...updates },
         }));
       },
-      
-      resetSettings: () => {
-        set({
-          company: {
-            name: '',
-            email: '',
-            phone: '',
-            address: '',
-            city: '',
-            state: '',
-            zipCode: '',
-            country: '',
-            logo: null,
-            website: '',
-            taxId: '',
-          },
-          defaults: {
-            currency: 'USD',
-            taxRate: 0,
-            validityDays: 30,
-            terms: '',
-            notes: '',
-          },
-        });
+
+      uploadLogo: (logoUrl) => {
+        set((state) => ({
+          company: { ...state.company, logo: logoUrl },
+        }));
       },
     }),
     {

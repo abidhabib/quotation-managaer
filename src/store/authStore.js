@@ -6,35 +6,37 @@ export const useAuthStore = create(
     (set) => ({
       user: null,
       isAuthenticated: false,
-      
+
       login: (email, password) => {
-        // Simulated login - in production, this would call an API
+        // Simulated login - replace with actual API call
         const user = {
           id: '1',
-          name: 'John Doe',
-          email,
-          company: 'Acme Inc',
+          name: 'Demo User',
+          email: email,
+          company: 'Demo Company',
           role: 'admin',
         };
         set({ user, isAuthenticated: true });
         return { success: true };
       },
-      
+
       register: (data) => {
         const user = {
-          id: generateId(),
-          ...data,
-          role: 'admin',
+          id: Date.now().toString(),
+          name: data.name,
+          email: data.email,
+          company: data.company,
+          role: 'owner',
         };
         set({ user, isAuthenticated: true });
         return { success: true };
       },
-      
+
       logout: () => {
         set({ user: null, isAuthenticated: false });
       },
-      
-      updateUser: (updates) => {
+
+      updateProfile: (updates) => {
         set((state) => ({
           user: { ...state.user, ...updates },
         }));
@@ -45,5 +47,3 @@ export const useAuthStore = create(
     }
   )
 );
-
-const generateId = () => Math.random().toString(36).substring(2, 9);

@@ -1,71 +1,61 @@
-import { clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { format } from 'date-fns';
 
-export function cn(...inputs) {
-  return twMerge(clsx(inputs));
-}
-
-export const formatCurrency = (amount, currency = 'USD') => {
-  return new Intl.NumberFormat('en-US', {
+export const formatCurrency = (amount, currency = 'PKR') => {
+  return new Intl.NumberFormat('en-PK', {
     style: 'currency',
-    currency,
+    currency: currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
   }).format(amount);
 };
 
-export const formatDate = (date) => {
+export const formatDate = (date, pattern = 'dd MMM yyyy') => {
   if (!date) return '';
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
+  try {
+    return format(new Date(date), pattern);
+  } catch (e) {
+    return date;
+  }
 };
 
-export const formatDateTime = (date) => {
-  if (!date) return '';
-  return new Date(date).toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+export const generateQuotationNumber = () => {
+  const year = new Date().getFullYear();
+  const random = Math.floor(Math.random() * 900) + 100;
+  return `QT-${year}-${random}`;
 };
 
-export const generateId = () => {
-  return Math.random().toString(36).substring(2, 9);
-};
-
-export const generateQuoteNumber = () => {
-  const prefix = 'QT';
-  const date = new Date();
-  const year = date.getFullYear().toString().slice(-2);
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-  return `${prefix}-${year}${month}-${random}`;
-};
-
-export const calculateQuotationTotals = (items, defaultTax = 0) => {
+export const calculateTotals = (items, taxRate = 0, discountRate = 0) => {
   const subtotal = items.reduce((sum, item) => {
-    const itemTotal = (item.quantity || 0) * (item.price || 0);
-    const discountAmount = itemTotal * ((item.discount || 0) / 100);
-    return sum + itemTotal - discountAmount;
+    const itemTotal = (item.price || 0) * (item.quantity || 1);
+    return sum + itemTotal;
   }, 0);
 
-  const totalDiscount = items.reduce((sum, item) => {
-    const itemTotal = (item.quantity || 0) * (item.price || 0);
-    return sum + itemTotal * ((item.discount || 0) / 100);
-  }, 0);
-
-  const taxAmount = subtotal * (defaultTax / 100);
-  const grandTotal = subtotal + taxAmount;
+  const discountAmount = subtotal * (discountRate / 100);
+  const taxableAmount = subtotal - discountAmount;
+  const taxAmount = taxableAmount * (taxRate / 100);
+  const grandTotal = taxableAmount + taxAmount;
 
   return {
     subtotal,
-    totalDiscount,
+    discountAmount,
     taxAmount,
     grandTotal,
   };
+};
+
+export const cn = (...classes) => {
+  return classes.filter(Boolean).join(' ');
+};
+
+export const getStatusColor = (status) => {
+  const colors = {
+    draft: 'bg-gray-100 text-gray-800',
+    sent: 'bg-blue-100 text-blue-800',
+    approved: 'bg-green-100 text-green-800',
+    rejected: 'bg-red-100 text-red-800',
+    expired: 'bg-orange-100 text-orange-800',
+  };
+  return colors[status?.toLowerCase()] || 'bg-gray-100 text-gray-800';
 };
 
 export const validateEmail = (email) => {
@@ -74,28 +64,6 @@ export const validateEmail = (email) => {
 };
 
 export const validatePhone = (phone) => {
-  const re = /^[\d\s\-\+\(\)]{10,}$/;
+  const re = /^[\d\s\-\+\(\)]{8,}$/;
   return re.test(phone);
-};
-
-export const getStatusColor = (status) => {
-  const colors = {
-    draft: 'badge-gray',
-    sent: 'badge-info',
-    approved: 'badge-success',
-    rejected: 'badge-danger',
-    expired: 'badge-warning',
-  };
-  return colors[status] || 'badge-gray';
-};
-
-export const getStatusLabel = (status) => {
-  const labels = {
-    draft: 'Draft',
-    sent: 'Sent',
-    approved: 'Approved',
-    rejected: 'Rejected',
-    expired: 'Expired',
-  };
-  return labels[status] || status;
 };
